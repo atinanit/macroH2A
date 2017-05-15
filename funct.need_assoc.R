@@ -434,3 +434,20 @@ multiple_merges <- function(Region){
   }
   return(merges_Region)
 }
+parseResults <- function(toGrep = "", call, mat, limit=TRUE, gr.range= c(-1,1), ind = NULL, mat.plot = TRUE){
+  if (!is.null(toGrep)){
+    pind <- grep(toGrep, names(mat))
+    if(is.null(ind)){
+      plot.mat <- getMatrixAssociation_matrix(call, mat[pind], name = deparse(substitute(mat)), mat.plot = TRUE, limit = limit, gr.range = gr.range)
+    } else {
+      plot.mat <- getMatrixAssociation_matrix(call, mat[pind], name = deparse(substitute(mat)), mat.plot = TRUE, ind = ind[[1]][[2]], limit = limit, gr.range= gr.range)
+    }
+  } else {
+    if(is.null(ind)){
+      plot.mat <- getMatrixAssociation_matrix(call, mat, name = deparse(substitute(mat)), mat.plot = TRUE, limit = limit, gr.range = gr.range)
+    } else {
+      plot.mat <- getMatrixAssociation_matrix(call, mat, name = deparse(substitute(mat)), mat.plot = TRUE, ind = ind[[1]][[2]], limit = limit, gr.range= gr.range)
+    }
+  }
+  return (plot.mat)
+}
