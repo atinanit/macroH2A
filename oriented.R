@@ -1,4 +1,3 @@
-library(GenomicRanges)
 library(regioneR)
 library(dplyr)
 library(rtracklayer)
@@ -52,42 +51,7 @@ modelingScore <- function(bedGraph, bin = 0, spar = 0.4){
   }
   return(mod)
 }
-.chrAsNum <- function(tbl){
-  tbl$chrom <- gsub("chr", "", tbl$chrom)
-  tbl$chrom[tbl$chrom=="X"] <- 23
-  tbl$chrom[tbl$chrom=="Y"] <- 24
-  tbl$chrom <- as.numeric(tbl$chrom)
-  tbl[order(tbl$chrom),]
-}
-getCentromeres <- function(genome="hg19"){
-  mySession <- try(browserSession("UCSC"), silent=TRUE)
-  # In case of failure, try another mirror
-  if(inherits(mySession, "try-error"))
-    mySession <- browserSession("UCSC",
-                                url="http://genome-euro.ucsc.edu/cgi-bin/")
-  genome(mySession) <- genome
-  obj <- ucscTableQuery(mySession, table="gap")
-  tbl <- getTable(obj)
-  tbl <- tbl[tbl$type=="centromere", c("chrom", "chromStart", "chromEnd")]
-  colnames(tbl)[2:3] <- c("centromerStart", "centromerEnd")
-  .chrAsNum(tbl)
-}
-maskCentromers <- function(GR, GR.centromers, extend.start = 0,
-                           extend.end = 0){
-  require(regioneR)
-  if (extend.start != 0 & extend.end != 0){
-    GR.centromers <- extendRegions(GR.centromers,
-                                   extend.start=extend.start,
-                                   extend.end = extend.end)
-  }
-  GR <- GR[!GR %over% GR.centromers]
-  return(GR)
-}
-maskRegions <- function(GR, GR.mask){
-  require(regioneR)
-  GR <- GR[!GR %over% GR.mask]
-  return(GR)
-}
+
 getScoringRegionIR <- function(get.score.regions.file, GR.row, modA.reference,
                                bin = 0, spar = 0.4, reverse = FALSE){
   require(rtracklayer)
